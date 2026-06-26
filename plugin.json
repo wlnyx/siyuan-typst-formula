@@ -9,11 +9,11 @@
   "frontends": ["all"],
   "displayName": {
     "default": "Typst Formula",
-    "zh_CN": "Typst 公式"
+    "zh_CN": "Typst 公式输入"
   },
   "description": {
-    "default": "Type Typst math in formula panel, auto-convert to LaTeX.",
-    "zh_CN": "在公式面板输入 Typst 数学语法，自动转为 LaTeX。"
+    "default": "Type Typst math directly in SiYuan's formula editor.",
+    "zh_CN": "在思源公式面板中直接输入 Typst 数学语法，自动转为 LaTeX。"
   },
   "readme": {
     "default": "README.md",
