@@ -1,0 +1,31 @@
+{
+  "name": "siyuan-typst-formula",
+  "author": "Clouder0",
+  "url": "https://github.com/clouder0/siyuan-typst-plugin",
+  "version": "0.1.0",
+  "minAppVersion": "3.5.0",
+  "disabledInPublish": true,
+  "backends": ["all"],
+  "frontends": ["all"],
+  "displayName": {
+    "default": "Typst Formula",
+    "zh_CN": "Typst 公式"
+  },
+  "description": {
+    "default": "Type Typst math in formula panel, auto-convert to LaTeX.",
+    "zh_CN": "在公式面板输入 Typst 数学语法，自动转为 LaTeX。"
+  },
+  "readme": {
+    "default": "README.md",
+    "zh_CN": "README_zh_CN.md"
+  },
+  "funding": {
+    "custom": [""]
+  },
+  "keywords": [
+    "math",
+    "formula",
+    "typst",
+    "latex"
+  ]
+}

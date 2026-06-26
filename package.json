@@ -1,0 +1,32 @@
+{
+  "name": "siyuan-typst-formula",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Type Typst math in formula panel, auto-convert to LaTeX.",
+  "repository": "https://github.com/clouder0/siyuan-typst-plugin",
+  "author": "Clouder0",
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development VITE_SOURCEMAP=inline vite build --watch",
+    "build": "cross-env NODE_ENV=production vite build",
+    "make-install": "bun run build && bunx make-install"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.0",
+    "cross-env": "^7.0.3",
+    "fast-glob": "^3.3.2",
+    "glob": "^10.4.1",
+    "rollup-plugin-livereload": "^2.0.5",
+    "siyuan": "^1.2.1",
+    "typescript": "^5.8.0",
+    "vite": "^5.2.13",
+    "vite-plugin-static-copy": "^1.0.5",
+    "vite-plugin-zip-pack": "^1.2.2"
+  },
+  "trustedDependencies": [
+    "@parcel/watcher"
+  ],
+  "dependencies": {
+    "tex2typst": "^0.6.2"
+  }
+}
