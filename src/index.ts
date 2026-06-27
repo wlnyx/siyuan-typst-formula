@@ -21,84 +21,73 @@ function saveMode(mode: "latex" | "typst") {
 
 // ── Plugin ─────────────────────────────────────────────────────────────
 export default class TypstFormulaPlugin extends Plugin {
-  private onBlockOpen: (e: CustomEvent) => void;
+  private domObserver: MutationObserver | null = null;
 
   async onload() {
-    this.onBlockOpen = () => {
-      // Retry a few times — panel may not be in DOM yet
-      this.tryInject(0);
-    };
-    this.eventBus.on("open-noneditableblock", this.onBlockOpen);
-
-    // Inject CSS once
+    // CSS
     const style = document.createElement("style");
     style.textContent = `
-      .${TOGGLE_CLASS} { font-size:12px; cursor:pointer; user-select:none; margin-left:8px; white-space:nowrap; }
+      .${TOGGLE_CLASS} { font-size:12px; cursor:pointer; user-select:none; margin-left:8px; white-space:nowrap; color:var(--b3-theme-on-surface); }
       .${TOGGLE_CLASS} .${LABEL_CLASS} { opacity:0.4; }
-      .${TOGGLE_CLASS} .${LABEL_CLASS}.${ACTIVE_CLASS} { opacity:1; font-weight:bold; }
+      .${TOGGLE_CLASS} .${LABEL_CLASS}.${ACTIVE_CLASS} { opacity:1; font-weight:bold; color:var(--b3-theme-on-background); }
     `;
     document.head.appendChild(style);
+
+    // Watch body for formula panel appearing
+    this.domObserver = new MutationObserver(() => this.checkAndInject());
+    this.domObserver.observe(document.body, { childList: true, subtree: true });
+
+    // Also listen to event for immediate response
+    this.eventBus.on("open-noneditableblock", () => this.checkAndInject());
+
+    // Initial check
+    this.checkAndInject();
   }
 
   async onunload() {
-    this.eventBus.off("open-noneditableblock", this.onBlockOpen);
+    this.domObserver?.disconnect();
+    this.domObserver = null;
+    this.eventBus.off("open-noneditableblock", () => this.checkAndInject());
   }
 
-  // ── Retry injection until panel is ready ───────────────────────────
-  private tryInject(retry: number) {
+  private checkAndInject() {
     const panel = document.querySelector(".protyle-util") as HTMLElement | null;
-    if (!panel) {
-      if (retry < 10) setTimeout(() => this.tryInject(retry + 1), 80);
-      return;
-    }
+    if (!panel) return;
 
     const textarea = panel.querySelector("textarea") as HTMLTextAreaElement | null;
-    if (!textarea) {
-      if (retry < 10) setTimeout(() => this.tryInject(retry + 1), 80);
-      return;
-    }
+    if (!textarea) return;
+
+    // Already injected?
+    if (textarea.hasAttribute(PROXY_ATTR)) return;
 
     this.inject(panel, textarea);
   }
 
-  // ── Inject toggle + proxy ─────────────────────────────────────────
   private inject(panel: HTMLElement, textarea: HTMLTextAreaElement) {
+    const saved = getSavedMode();
+    panel.setAttribute("data-tf-mode", saved);
+
     // ── Toggle UI ──────────────────────────────────────────────────
-    let toggle = panel.querySelector(`.${TOGGLE_CLASS}`) as HTMLElement | null;
+    const toggle = document.createElement("span");
+    toggle.className = TOGGLE_CLASS;
+    toggle.innerHTML = [
+      `<span class="${LABEL_CLASS}${saved === 'latex' ? ' ' + ACTIVE_CLASS : ''}" data-tf-mode="latex">LaTeX</span>`,
+      `<span class="${LABEL_CLASS}${saved === 'typst' ? ' ' + ACTIVE_CLASS : ''}" data-tf-mode="typst">Typst</span>`,
+    ].join(" | ");
 
-    if (!toggle) {
-      const saved = getSavedMode();
-      toggle = document.createElement("span");
-      toggle.className = TOGGLE_CLASS;
-      toggle.innerHTML = [
-        `<span class="${LABEL_CLASS}${saved === 'latex' ? ' ' + ACTIVE_CLASS : ''}" data-tf-mode="latex">LaTeX</span>`,
-        `<span class="${LABEL_CLASS}${saved === 'typst' ? ' ' + ACTIVE_CLASS : ''}" data-tf-mode="typst">Typst</span>`,
-      ].join(" | ");
+    toggle.addEventListener("click", (e) => {
+      const span = (e.target as HTMLElement).closest(`.${LABEL_CLASS}`);
+      if (!span) return;
+      const mode = span.getAttribute("data-tf-mode") as "latex" | "typst";
+      toggle.querySelectorAll(`.${LABEL_CLASS}`).forEach((s) => s.classList.remove(ACTIVE_CLASS));
+      span.classList.add(ACTIVE_CLASS);
+      panel.setAttribute("data-tf-mode", mode);
+      saveMode(mode);
+    });
 
-      toggle.addEventListener("click", (e) => {
-        const span = (e.target as HTMLElement).closest(`.${LABEL_CLASS}`);
-        if (!span) return;
-        const mode = span.getAttribute("data-tf-mode") as "latex" | "typst";
-        toggle!.querySelectorAll(`.${LABEL_CLASS}`).forEach((s) => s.classList.remove(ACTIVE_CLASS));
-        span.classList.add(ACTIVE_CLASS);
-        panel.setAttribute("data-tf-mode", mode);
-        saveMode(mode);
-      });
-
-      // Place toggle after textarea
-      textarea.insertAdjacentElement("afterend", toggle);
-    } else {
-      // Existing toggle — ensure it's after current textarea
-      if (toggle.previousElementSibling !== textarea) {
-        textarea.insertAdjacentElement("afterend", toggle);
-      }
-    }
-
-    panel.setAttribute("data-tf-mode", panel.getAttribute("data-tf-mode") || getSavedMode());
+    textarea.insertAdjacentElement("afterend", toggle);
 
     // ── Value proxy ────────────────────────────────────────────────
-    if (textarea.hasAttribute(PROXY_ATTR)) return;
-
     const origDesc = Object.getOwnPropertyDescriptor(
       HTMLTextAreaElement.prototype,
       "value",

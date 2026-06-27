@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Type Typst math in formula panel, auto-convert to LaTeX.",
-  "repository": "https://github.com/clouder0/siyuan-typst-plugin",
-  "author": "Clouder0",
+  "repository": "https://github.com/wlnyx/siyuan-typst-formula",
+  "author": "wlnyx",
   "license": "GPL-3.0-only",
   "scripts": {
     "dev": "cross-env NODE_ENV=development VITE_SOURCEMAP=inline vite build --watch",

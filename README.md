@@ -1,18 +1,33 @@
-# Typst Formula — SiYuan Plugin
+# Typst Formula
 
-Type Typst math in SiYuan formula panel, auto-convert to LaTeX.
+在思源笔记公式面板中直接输入 Typst 数学语法，自动转为 LaTeX 渲染。
 
-## Usage
+## 安装
 
-1. Open formula panel (toolbar or `/` menu)
-2. Toggle to **Typst** mode (remembers your choice)
-3. Type Typst math, e.g. `sum_(i=1)^n i`
-4. Confirm — auto-converted to LaTeX, rendered by KaTeX
+从 [Releases](../../releases) 下载 `package.zip`，在思源设置 → 插件 → 从 ZIP 导入。
 
-## Install
+或手动构建：
 
-Download `package.zip` from [Releases](../../releases) and import in SiYuan.
+```bash
+git clone https://github.com/wlnyx/siyuan-typst-formula.git
+cd siyuan-typst-formula
+npm install
+npm run build
+# 将 dist/ 复制到思源 data/plugins/siyuan-typst-formula/
+```
 
-## How It Works
+## 使用
 
-Uses [tex2typst](https://github.com/qwinsi/tex2typst) to convert Typst math → LaTeX in real-time when SiYuan reads the formula value. No WASM, no CDN, ~59KB.
+1. 点击工具栏公式按钮（或 `/` 菜单插入公式）
+2. 公式面板中出现 **LaTeX | Typst** 切换开关
+3. 切换到 **Typst** 模式（插件会记住你的选择）
+4. 直接输入 Typst 数学语法，例如：`sum_(i=1)^n i`
+5. 点击确认，自动转为 `\sum_{i=1}^{n} i`，由 KaTeX 渲染
+
+## 原理
+
+使用 [tex2typst](https://github.com/qwinsi/tex2typst) 的 `typst2tex()` 函数，在思源读取公式值时实时转换。纯 JS 实现，无需 WASM，不依赖 CDN。
+
+## License
+
+GPL-3.0

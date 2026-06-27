@@ -1,7 +1,7 @@
 {
   "name": "siyuan-typst-formula",
-  "author": "Clouder0",
-  "url": "https://github.com/clouder0/siyuan-typst-plugin",
+  "author": "wlnyx",
+  "url": "https://github.com/wlnyx/siyuan-typst-formula",
   "version": "0.1.0",
   "minAppVersion": "3.5.0",
   "disabledInPublish": true,
@@ -9,18 +9,15 @@
   "frontends": ["all"],
   "displayName": {
     "default": "Typst Formula",
-    "zh_CN": "Typst 公式输入"
+    "zh-CN": "Typst 公式输入"
   },
   "description": {
     "default": "Type Typst math directly in SiYuan's formula editor.",
-    "zh_CN": "在思源公式面板中直接输入 Typst 数学语法，自动转为 LaTeX。"
+    "zh-CN": "在思源公式面板中直接输入 Typst 数学语法，自动转为 LaTeX。"
   },
   "readme": {
     "default": "README.md",
-    "zh_CN": "README_zh_CN.md"
-  },
-  "funding": {
-    "custom": [""]
+    "zh-CN": "README_zh_CN.md"
   },
   "keywords": [
     "math",
